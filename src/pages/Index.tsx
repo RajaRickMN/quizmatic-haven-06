@@ -5,10 +5,9 @@ import Footer from '@/components/layout/Footer';
 import ModuleCard from '@/components/ui-custom/ModuleCard';
 import { useLearning } from '@/context/LearningContext';
 import ExcelImport from '@/components/import/ExcelImport';
+import { Layers, CheckCircle, Clipboard } from 'lucide-react';
 
 const Index = () => {
-  const { setCurrentModule } = useLearning();
-  
   return (
     <div className="flex flex-col min-h-screen">
       <NavBar />
@@ -25,23 +24,26 @@ const Index = () => {
               <ModuleCard 
                 title="Flashcards" 
                 description="Review concepts with interactive flashcards"
-                icon="LayersIcon"
-                href="/flashcards"
-                onClick={() => setCurrentModule('flashcards')}
+                icon={<Layers />}
+                path="/flashcards"
+                delay={100}
+                moduleType="flashcards"
               />
               <ModuleCard 
                 title="Multiple Choice" 
                 description="Test your knowledge with MCQs"
-                icon="CheckCircleIcon"
-                href="/mcq"
-                onClick={() => setCurrentModule('mcqs')}
+                icon={<CheckCircle />}
+                path="/mcq"
+                delay={200}
+                moduleType="mcqs"
               />
               <ModuleCard 
                 title="Tests" 
                 description="Complete comprehensive tests"
-                icon="ClipboardIcon"
-                href="/tests"
-                onClick={() => setCurrentModule('tests')}
+                icon={<Clipboard />}
+                path="/tests"
+                delay={300}
+                moduleType="tests"
               />
             </div>
           </section>
