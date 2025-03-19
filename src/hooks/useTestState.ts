@@ -44,5 +44,5 @@ export const useTestState = () => {
     toast.success(`Reset ${type} tests successfully`);
   };
   
-  return { tests, updateTestStatus, resetTests };
+  return { tests, setTests, updateTestStatus, resetTests };
 };

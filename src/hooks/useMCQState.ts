@@ -44,5 +44,5 @@ export const useMCQState = () => {
     toast.success(`Reset ${type} MCQs successfully`);
   };
   
-  return { mcqs, updateMCQStatus, resetMCQs };
+  return { mcqs, setMCQs, updateMCQStatus, resetMCQs };
 };

@@ -7,6 +7,9 @@ export interface LearningContextType {
   mcqs: MCQ[];
   tests: Test[];
   
+  // Data import
+  importData: (data: { flashcards: Flashcard[]; mcqs: MCQ[]; tests: Test[] }) => void;
+  
   // Filters
   filterOptions: FilterOptions;
   setFilterOptions: (options: FilterOptions) => void;

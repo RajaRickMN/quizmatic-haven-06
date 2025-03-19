@@ -3,50 +3,56 @@ import React from 'react';
 import NavBar from '@/components/layout/NavBar';
 import Footer from '@/components/layout/Footer';
 import ModuleCard from '@/components/ui-custom/ModuleCard';
-import { BookOpenText, BookCheck, FileText } from 'lucide-react';
+import { useLearning } from '@/context/LearningContext';
+import ExcelImport from '@/components/import/ExcelImport';
 
 const Index = () => {
+  const { setCurrentModule } = useLearning();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <NavBar />
       
-      <main className="flex-1 container py-16">
-        <div className="max-w-3xl mx-auto text-center mb-16 opacity-0 animate-fade-up" style={{ animationDelay: '100ms', animationFillMode: 'forwards' }}>
-          <h1 className="text-4xl font-bold tracking-tight mb-4">
-            Welcome to LearningApp
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Your interactive platform for flashcards, quizzes, and tests
-          </p>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          <ModuleCard
-            title="Flashcards"
-            description="Review and memorize with interactive flashcards"
-            icon={<BookOpenText />}
-            path="/flashcards"
-            delay={300}
-            moduleType="flashcards"
-          />
+      <main className="flex-1 p-6 lg:p-10 animate-fade-in">
+        <div className="max-w-6xl mx-auto space-y-10">
+          <section>
+            <h1 className="text-4xl font-bold mb-6">Learning Made Simple</h1>
+            <p className="text-lg text-muted-foreground mb-8">
+              Your personal learning assistant for mastering any subject
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <ModuleCard 
+                title="Flashcards" 
+                description="Review concepts with interactive flashcards"
+                icon="LayersIcon"
+                href="/flashcards"
+                onClick={() => setCurrentModule('flashcards')}
+              />
+              <ModuleCard 
+                title="Multiple Choice" 
+                description="Test your knowledge with MCQs"
+                icon="CheckCircleIcon"
+                href="/mcq"
+                onClick={() => setCurrentModule('mcqs')}
+              />
+              <ModuleCard 
+                title="Tests" 
+                description="Complete comprehensive tests"
+                icon="ClipboardIcon"
+                href="/tests"
+                onClick={() => setCurrentModule('tests')}
+              />
+            </div>
+          </section>
           
-          <ModuleCard
-            title="Multiple Choice"
-            description="Test your knowledge with multiple choice questions"
-            icon={<BookCheck />}
-            path="/mcq"
-            delay={500}
-            moduleType="mcqs"
-          />
-          
-          <ModuleCard
-            title="Tests"
-            description="Challenge yourself with comprehensive tests"
-            icon={<FileText />}
-            path="/tests"
-            delay={700}
-            moduleType="tests"
-          />
+          <section className="mt-12">
+            <h2 className="text-2xl font-bold mb-6">Import Your Learning Materials</h2>
+            <p className="text-muted-foreground mb-6">
+              Upload an Excel file named "app.xlsx" with sheets labeled "Flashcards", "MCQs", and "Tests" to import your learning materials.
+            </p>
+            <ExcelImport />
+          </section>
         </div>
       </main>
       

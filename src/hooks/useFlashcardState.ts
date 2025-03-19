@@ -55,5 +55,5 @@ export const useFlashcardState = () => {
     toast.success(`Reset ${type} flashcards successfully`);
   };
   
-  return { flashcards, updateFlashcardStatus, resetFlashcards };
+  return { flashcards, setFlashcards, updateFlashcardStatus, resetFlashcards };
 };
