@@ -1,69 +1,110 @@
-# Welcome to your Lovable project
 
-## Project info
+# Learning App
 
-**URL**: https://lovable.dev/projects/0acddc25-9068-4913-b497-14da59b42668
+A comprehensive learning application with flashcards, multiple-choice questions, and tests to help you master any subject.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **Flashcards**: Review concepts with interactive flashcards
+- **Multiple Choice Questions**: Test your knowledge with MCQs
+- **Tests**: Complete comprehensive tests
+- **Import Feature**: Upload your own learning materials via Excel
+- **Dark/Light Mode**: Toggle between themes for comfortable studying
+- **Filtering**: Filter study materials by subject and topic
 
-**Use Lovable**
+## Getting Started
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0acddc25-9068-4913-b497-14da59b42668) and start prompting.
+Follow these instructions to set up and run the project locally on your machine.
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- [Node.js](https://nodejs.org/) (v16.0 or later)
+- npm (included with Node.js) or [pnpm](https://pnpm.io/) (recommended)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. Clone the repository:
+   ```bash
+   git clone <your-repository-url>
+   cd learning-app
+   ```
 
-Follow these steps:
+2. Install dependencies:
+   ```bash
+   npm install
+   # or with pnpm
+   pnpm install
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+3. Start the development server:
+   ```bash
+   npm run dev
+   # or with pnpm
+   pnpm dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+4. Open your browser and navigate to:
+   ```
+   http://localhost:8080
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Importing Learning Materials
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+The app supports importing flashcards, MCQs, and tests via Excel files. To import your own learning materials:
+
+1. Create an Excel file named `app.xlsx` with the following sheets:
+   - `Flashcards`: Columns should include id, question, answer, subject, topic
+   - `MCQs`: Columns should include id, question, options (as JSON array), correctAnswer, subject, topic
+   - `Tests`: Columns should include id, title, questions (as JSON array), subject, topic
+
+2. Use the import feature on the homepage to upload your Excel file.
+
+## Project Structure
+
+```
+src/
+├── components/         # UI components
+│   ├── flashcards/     # Flashcard-related components
+│   ├── import/         # Import functionality
+│   ├── layout/         # Layout components (navbar, footer, etc.)
+│   ├── mcq/            # MCQ-related components
+│   ├── ui/             # Shadcn UI components
+│   └── ui-custom/      # Custom UI components
+├── context/            # React context providers
+├── hooks/              # Custom React hooks
+├── pages/              # Page components
+├── types/              # TypeScript type definitions
+└── utils/              # Utility functions
 ```
 
-**Edit a file directly in GitHub**
+## Technologies Used
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- [React](https://reactjs.org/) - UI library
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Vite](https://vitejs.dev/) - Build tool
+- [React Router](https://reactrouter.com/) - Routing
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Shadcn UI](https://ui.shadcn.com/) - UI component library
+- [Tanstack Query](https://tanstack.com/query/latest) - Data fetching
+- [XLSX](https://github.com/SheetJS/sheetjs) - Excel file processing
 
-**Use GitHub Codespaces**
+## Development
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Available Scripts
 
-## What technologies are used for this project?
+- `npm run dev` - Start the development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview the production build locally
 
-This project is built with .
+### Adding New Features
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+When adding new features or components:
 
-## How can I deploy this project?
+1. Create new components in the appropriate folders
+2. Update types as needed in `src/types/`
+3. Use the existing context providers for state management
+4. Follow the established patterns for consistency
 
-Simply open [Lovable](https://lovable.dev/projects/0acddc25-9068-4913-b497-14da59b42668) and click on Share -> Publish.
+## License
 
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+This project is licensed under the MIT License - see the LICENSE file for details.
