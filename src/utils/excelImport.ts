@@ -15,6 +15,8 @@ export const parseExcelData = (file: File): Promise<{
         const data = e.target?.result;
         const workbook = XLSX.read(data, { type: 'binary' });
         
+        console.log('Excel sheets found:', workbook.SheetNames);
+        
         const flashcards: Flashcard[] = [];
         const mcqs: MCQ[] = [];
         const tests: Test[] = [];
@@ -24,15 +26,18 @@ export const parseExcelData = (file: File): Promise<{
           const worksheet = workbook.Sheets['Flashcards'];
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
           
-          jsonData.forEach((row: any) => {
+          console.log('Flashcards data:', jsonData);
+          
+          jsonData.forEach((row: any, index: number) => {
+            console.log(`Processing flashcard ${index + 1}:`, row);
             flashcards.push({
               id: row.id || `f${flashcards.length + 1}`,
               question: row.question || '',
               answer: row.answer || '',
               subject: row.subject || 'General',
               topic: row.topic || 'General',
-              correct: row.correct || 0,
-              wrong: row.wrong || 0,
+              correct: Number(row.correct) || 0,
+              wrong: Number(row.wrong) || 0,
               status: row.status || 'unattempted'
             });
           });
@@ -42,7 +47,10 @@ export const parseExcelData = (file: File): Promise<{
           const worksheet = workbook.Sheets['MCQs'];
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
           
-          jsonData.forEach((row: any) => {
+          console.log('MCQs data:', jsonData);
+          
+          jsonData.forEach((row: any, index: number) => {
+            console.log(`Processing MCQ ${index + 1}:`, row);
             mcqs.push({
               id: row.id || `m${mcqs.length + 1}`,
               question: row.question || '',
@@ -65,7 +73,10 @@ export const parseExcelData = (file: File): Promise<{
           const worksheet = workbook.Sheets['Tests'];
           const jsonData = XLSX.utils.sheet_to_json(worksheet);
           
-          jsonData.forEach((row: any) => {
+          console.log('Tests data:', jsonData);
+          
+          jsonData.forEach((row: any, index: number) => {
+            console.log(`Processing test ${index + 1}:`, row);
             tests.push({
               id: row.id || `t${tests.length + 1}`,
               question: row.question || '',
@@ -84,6 +95,12 @@ export const parseExcelData = (file: File): Promise<{
             });
           });
         }
+        
+        console.log('Parsed data summary:', {
+          flashcardsCount: flashcards.length,
+          mcqsCount: mcqs.length,
+          testsCount: tests.length
+        });
         
         resolve({ flashcards, mcqs, tests });
       } catch (error) {

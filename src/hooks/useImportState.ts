@@ -10,18 +10,50 @@ export const useImportState = (
 ) => {
   const importData = useCallback(
     (data: { flashcards: Flashcard[]; mcqs: MCQ[]; tests: Test[] }) => {
+      console.log('Importing data:', data);
+      
       if (data.flashcards && data.flashcards.length > 0) {
-        setFlashcards(data.flashcards);
+        console.log('Setting flashcards:', data.flashcards);
+        setFlashcards(prevFlashcards => {
+          const newFlashcards = [...prevFlashcards];
+          // Add only flashcards with unique IDs
+          data.flashcards.forEach(card => {
+            if (!newFlashcards.some(existing => existing.id === card.id)) {
+              newFlashcards.push(card);
+            }
+          });
+          return newFlashcards;
+        });
         toast.success(`Imported ${data.flashcards.length} flashcards`);
       }
       
       if (data.mcqs && data.mcqs.length > 0) {
-        setMCQs(data.mcqs);
+        console.log('Setting MCQs:', data.mcqs);
+        setMCQs(prevMCQs => {
+          const newMCQs = [...prevMCQs];
+          // Add only MCQs with unique IDs
+          data.mcqs.forEach(mcq => {
+            if (!newMCQs.some(existing => existing.id === mcq.id)) {
+              newMCQs.push(mcq);
+            }
+          });
+          return newMCQs;
+        });
         toast.success(`Imported ${data.mcqs.length} MCQs`);
       }
       
       if (data.tests && data.tests.length > 0) {
-        setTests(data.tests);
+        console.log('Setting tests:', data.tests);
+        setTests(prevTests => {
+          const newTests = [...prevTests];
+          // Add only tests with unique IDs
+          data.tests.forEach(test => {
+            if (!newTests.some(existing => existing.id === test.id)) {
+              newTests.push(test);
+            }
+          });
+          return newTests;
+        });
         toast.success(`Imported ${data.tests.length} tests`);
       }
       
