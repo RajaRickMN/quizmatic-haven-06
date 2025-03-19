@@ -60,8 +60,14 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // UI state
   const [currentModule, setCurrentModule] = useState<ModuleType | null>(null);
   
-  // Import data
-  const { importData } = useImportState(setFlashcards, setMCQs, setTests);
+  // Import data - passing updateSubjects and updateTopics directly to avoid circular dependency
+  const { importData } = useImportState(
+    setFlashcards, 
+    setMCQs, 
+    setTests, 
+    updateSubjects,
+    updateTopics
+  );
   
   const value = {
     // Data

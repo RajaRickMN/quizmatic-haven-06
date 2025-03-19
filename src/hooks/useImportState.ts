@@ -2,15 +2,14 @@
 import { useCallback } from 'react';
 import { Flashcard, MCQ, Test } from '../types';
 import { toast } from 'sonner';
-import { useLearning } from '../context/LearningContext';
 
 export const useImportState = (
   setFlashcards: React.Dispatch<React.SetStateAction<Flashcard[]>>,
   setMCQs: React.Dispatch<React.SetStateAction<MCQ[]>>,
-  setTests: React.Dispatch<React.SetStateAction<Test[]>>
+  setTests: React.Dispatch<React.SetStateAction<Test[]>>,
+  updateSubjects: (newSubjects: string[]) => void,
+  updateTopics: (newTopics: Record<string, string[]>) => void
 ) => {
-  const { updateSubjects, updateTopics } = useLearning();
-  
   const importData = useCallback(
     (data: { 
       flashcards: Flashcard[]; 
