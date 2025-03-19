@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   Flashcard, 
@@ -15,7 +14,7 @@ import {
   subjects,
   topics
 } from '../utils/mockData';
-import { toast } from '@/components/ui/sonner';
+import { toast } from "sonner";
 
 interface LearningContextType {
   // Data
