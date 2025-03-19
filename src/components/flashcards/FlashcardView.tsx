@@ -1,12 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { Flashcard as FlashcardType, Status } from '@/types';
-import Card from '@/components/ui-custom/Card';
-import StatusBadge from '@/components/ui-custom/StatusBadge';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Check, X, Edit } from 'lucide-react';
 import { useLearning } from '@/context/LearningContext';
-import { cn } from '@/lib/utils';
 
 interface FlashcardViewProps {
   flashcards: FlashcardType[];
@@ -21,171 +17,91 @@ const FlashcardView: React.FC<FlashcardViewProps> = ({
   onPrevious,
   onNext
 }) => {
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isEditMode, setIsEditMode] = useState(false);
-  const [answer, setAnswer] = useState('');
+  const [showAnswer, setShowAnswer] = useState(false);
   const { updateFlashcardStatus } = useLearning();
   
   const currentFlashcard = flashcards[currentIndex];
   
-  // Reset flip and edit state when changing cards
+  // Reset answer visibility when changing cards
   useEffect(() => {
-    setIsFlipped(false);
-    setIsEditMode(false);
-    setAnswer('');
+    setShowAnswer(false);
   }, [currentIndex]);
   
-  const handleFlip = () => {
-    setIsFlipped(!isFlipped);
-    if (isFlipped) {
-      setIsEditMode(false);
-    }
+  const handleShowAnswer = () => {
+    setShowAnswer(true);
   };
   
-  const handleEdit = () => {
-    setIsEditMode(true);
-    setAnswer(currentFlashcard.answer);
+  const handleCorrect = () => {
+    updateFlashcardStatus(currentFlashcard.id, 'correct');
+    onNext();
   };
   
-  const handleStatusUpdate = (status: Status) => {
-    updateFlashcardStatus(currentFlashcard.id, status);
+  const handleWrong = () => {
+    updateFlashcardStatus(currentFlashcard.id, 'wrong');
     onNext();
   };
   
   if (!currentFlashcard) {
     return (
-      <Card className="min-h-[400px] flex items-center justify-center">
+      <div className="min-h-[300px] flex items-center justify-center bg-accent/50 rounded-lg">
         <p className="text-muted-foreground">No flashcards available</p>
-      </Card>
+      </div>
     );
   }
   
   return (
-    <div className="mt-6 relative">
-      <div className={cn(
-        "relative w-full min-h-[400px] flashcard",
-        isFlipped && "flipped"
-      )}>
-        {/* Front side (Question) */}
-        <div className="flashcard-front w-full h-full">
-          <Card className="h-full flex flex-col">
-            <div className="absolute top-4 right-4">
-              <StatusBadge status={currentFlashcard.status} />
-            </div>
-            
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                {currentFlashcard.subject} ❯ {currentFlashcard.topic}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {currentIndex + 1} / {flashcards.length}
-              </p>
-            </div>
-            
-            <div className="flex-1 flex items-center justify-center">
-              <h3 className="text-2xl font-medium text-center">
-                {currentFlashcard.question}
-              </h3>
-            </div>
-            
-            <div className="mt-4 flex justify-center">
-              <Button onClick={handleFlip} className="w-full">
-                Show Answer
-              </Button>
-            </div>
-          </Card>
+    <div className="mt-6">
+      <div className="bg-[#2a2a2a] text-white rounded-lg p-8 min-h-[300px] flex flex-col">
+        {/* Question display */}
+        <div className="flex-1 flex items-center justify-center mb-6">
+          <h2 className="text-2xl font-medium text-center">
+            {currentFlashcard.question}
+          </h2>
         </div>
         
-        {/* Back side (Answer) */}
-        <div className="flashcard-back w-full h-full">
-          <Card className="h-full flex flex-col">
-            <div className="absolute top-4 right-4">
-              <StatusBadge status={currentFlashcard.status} />
+        {/* Controls */}
+        <div className="space-y-4">
+          {!showAnswer ? (
+            <Button 
+              onClick={handleShowAnswer}
+              className="w-full bg-[#25b3a7] hover:bg-[#1e968c] text-white"
+            >
+              Show Answer (Space)
+            </Button>
+          ) : (
+            <div className="bg-[#222] p-4 rounded-md mb-4">
+              <p className="text-lg">{currentFlashcard.answer}</p>
             </div>
-            
-            <div className="flex justify-between items-center mb-4">
-              <p className="text-sm font-medium text-muted-foreground">
-                {currentFlashcard.subject} ❯ {currentFlashcard.topic}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {currentIndex + 1} / {flashcards.length}
-              </p>
-            </div>
-            
-            <div className="flex-1 flex flex-col items-center justify-center relative">
-              <h4 className="text-lg font-medium mb-3 text-muted-foreground">Answer:</h4>
-              
-              {isEditMode ? (
-                <textarea
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
-                  className="w-full h-32 p-4 rounded-md bg-background border focus:ring-2 focus:ring-primary focus:outline-none"
-                />
-              ) : (
-                <h3 className="text-2xl font-medium text-center">
-                  {currentFlashcard.answer}
-                </h3>
-              )}
-              
-              {!isEditMode && (
-                <Button 
-                  onClick={handleEdit} 
-                  variant="outline" 
-                  size="icon"
-                  className="absolute top-0 right-0"
-                >
-                  <Edit className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-            
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              <Button 
-                onClick={handleFlip} 
-                variant="outline"
-              >
-                Back
-              </Button>
-              <Button 
-                onClick={() => handleStatusUpdate('wrong')} 
-                variant="destructive"
-              >
-                <X className="h-4 w-4 mr-2" />
-                Wrong
-              </Button>
-              <Button 
-                onClick={() => handleStatusUpdate('correct')} 
-                variant="default"
-                className="bg-correct hover:bg-correct/90"
-              >
-                <Check className="h-4 w-4 mr-2" />
-                Correct
-              </Button>
-            </div>
-          </Card>
+          )}
+          
+          <div className="grid grid-cols-2 gap-4">
+            <Button
+              onClick={onPrevious}
+              disabled={currentIndex === 0}
+              className="bg-[#25b3a7] hover:bg-[#1e968c] text-white"
+            >
+              Previous
+            </Button>
+            <Button
+              onClick={onNext}
+              disabled={currentIndex === flashcards.length - 1}
+              className="bg-[#25b3a7] hover:bg-[#1e968c] text-white"
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </div>
       
-      {/* Navigation buttons */}
-      <div className="flex justify-between mt-6">
-        <Button 
-          onClick={onPrevious} 
-          variant="outline" 
-          size="icon"
-          disabled={currentIndex === 0}
-          className="rounded-full"
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
-        <Button 
-          onClick={onNext} 
-          variant="outline" 
-          size="icon"
-          disabled={currentIndex === flashcards.length - 1}
-          className="rounded-full"
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
+      {/* Navigation progress */}
+      <div className="mt-4 flex justify-between items-center text-sm text-muted-foreground">
+        <div>Card {currentIndex + 1} of {flashcards.length}</div>
+        <div className="w-3/4 bg-secondary h-1 rounded-full overflow-hidden">
+          <div 
+            className="bg-primary h-full" 
+            style={{ width: `${((currentIndex + 1) / flashcards.length) * 100}%` }}
+          ></div>
+        </div>
       </div>
     </div>
   );
