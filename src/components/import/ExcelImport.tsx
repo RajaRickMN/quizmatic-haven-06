@@ -23,7 +23,7 @@ const ExcelImport = () => {
     setFileError('');
     
     try {
-      // Allow any Excel file now, not just app.xlsx
+      // Verify it's an Excel file
       if (!file.name.endsWith('.xlsx')) {
         setFileError('Please upload an Excel (.xlsx) file');
         toast.error('Please upload an Excel (.xlsx) file');
@@ -31,15 +31,19 @@ const ExcelImport = () => {
         return;
       }
       
+      toast.info(`Processing file: ${file.name}...`);
       console.log('Processing file:', file.name);
       const data = await parseExcelData(file);
       
-      if (data.flashcards.length === 0 && data.mcqs.length === 0 && data.tests.length === 0) {
+      // Count items to be imported
+      const totalItems = data.flashcards.length + data.mcqs.length + data.tests.length;
+      
+      if (totalItems === 0) {
         setFileError('No valid data found in the Excel file. Please make sure it has sheets named "Flashcards", "MCQs", or "Tests" with the correct column headers.');
         toast.error('No valid data found in the Excel file');
       } else {
+        toast.info(`Found ${totalItems} items to import...`);
         importData(data);
-        toast.success(`Successfully imported ${data.flashcards.length} flashcards, ${data.mcqs.length} MCQs, and ${data.tests.length} tests`);
       }
     } catch (error) {
       console.error('Import error:', error);

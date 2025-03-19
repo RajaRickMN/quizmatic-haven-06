@@ -30,16 +30,18 @@ export const parseExcelData = (file: File): Promise<{
           
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing flashcard ${index + 1}:`, row);
-            flashcards.push({
-              id: row.id || `f${flashcards.length + 1}`,
-              question: row.question || '',
-              answer: row.answer || '',
-              subject: row.subject || 'General',
-              topic: row.topic || 'General',
-              correct: Number(row.correct) || 0,
-              wrong: Number(row.wrong) || 0,
-              status: row.status || 'unattempted'
-            });
+            if (row.question) { // Ensure we have at least a question
+              flashcards.push({
+                id: row.id || `f${Date.now()}-${index}`,
+                question: row.question || '',
+                answer: row.answer || '',
+                subject: row.subject || 'General',
+                topic: row.topic || 'General',
+                correct: Number(row.correct) || 0,
+                wrong: Number(row.wrong) || 0,
+                status: row.status || 'unattempted'
+              });
+            }
           });
         }
         
@@ -51,21 +53,23 @@ export const parseExcelData = (file: File): Promise<{
           
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing MCQ ${index + 1}:`, row);
-            mcqs.push({
-              id: row.id || `m${mcqs.length + 1}`,
-              question: row.question || '',
-              options: {
-                a: row.option_a || '',
-                b: row.option_b || '',
-                c: row.option_c || '',
-                d: row.option_d || ''
-              },
-              key: row.key || 'a',
-              explanation: row.explanation || '',
-              subject: row.subject || 'General',
-              topic: row.topic || 'General',
-              status: row.status || 'unattempted'
-            });
+            if (row.question) { // Ensure we have at least a question
+              mcqs.push({
+                id: row.id || `m${Date.now()}-${index}`,
+                question: row.question || '',
+                options: {
+                  a: row.option_a || '',
+                  b: row.option_b || '',
+                  c: row.option_c || '',
+                  d: row.option_d || ''
+                },
+                key: row.key || 'a',
+                explanation: row.explanation || '',
+                subject: row.subject || 'General',
+                topic: row.topic || 'General',
+                status: row.status || 'unattempted'
+              });
+            }
           });
         }
         
@@ -77,22 +81,24 @@ export const parseExcelData = (file: File): Promise<{
           
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing test ${index + 1}:`, row);
-            tests.push({
-              id: row.id || `t${tests.length + 1}`,
-              question: row.question || '',
-              options: {
-                a: row.option_a || '',
-                b: row.option_b || '',
-                c: row.option_c || '',
-                d: row.option_d || ''
-              },
-              key: row.key || 'a',
-              explanation: row.explanation || '',
-              subject: row.subject || 'General',
-              topic: row.topic || 'General',
-              status: row.status || 'unattempted',
-              testNumber: row.testNumber || '1'
-            });
+            if (row.question) { // Ensure we have at least a question
+              tests.push({
+                id: row.id || `t${Date.now()}-${index}`,
+                question: row.question || '',
+                options: {
+                  a: row.option_a || '',
+                  b: row.option_b || '',
+                  c: row.option_c || '',
+                  d: row.option_d || ''
+                },
+                key: row.key || 'a',
+                explanation: row.explanation || '',
+                subject: row.subject || 'General',
+                topic: row.topic || 'General',
+                status: row.status || 'unattempted',
+                testNumber: row.testNumber || '1'
+              });
+            }
           });
         }
         
