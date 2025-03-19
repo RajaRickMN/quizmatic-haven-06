@@ -8,6 +8,8 @@ import ExcelImport from '@/components/import/ExcelImport';
 import { Layers, CheckCircle, Clipboard } from 'lucide-react';
 
 const Index = () => {
+  const { setCurrentModule } = useLearning();
+  
   return (
     <div className="flex flex-col min-h-screen">
       <NavBar />
