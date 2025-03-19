@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState } from 'react';
-import { ModuleType } from '../types';
+import { ModuleType, Flashcard, MCQ, Test, Status, FilterOptions } from '../types';
 import { subjects, topics } from '../utils/mockData';
 import { LearningContextType } from './types';
 import { useThemeState } from '../hooks/useThemeState';
@@ -13,43 +13,28 @@ import { useImportState } from '../hooks/useImportState';
 const LearningContext = createContext<LearningContextType | undefined>(undefined);
 
 export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Use our custom hooks to manage state
+  // Theme state
   const { theme, toggleTheme } = useThemeState();
   
-  // We need to get the setState functions for flashcards, MCQs, and tests
-  // so we can pass them to useImportState
-  const [flashcardState, setFlashcardState] = useState(() => {
-    const { flashcards, updateFlashcardStatus, resetFlashcards, setFlashcards } = useFlashcardState();
-    return { flashcards, updateFlashcardStatus, resetFlashcards, setFlashcards };
-  });
+  // Cards state
+  const { flashcards, updateFlashcardStatus, resetFlashcards, setFlashcards } = useFlashcardState();
+  const { mcqs, updateMCQStatus, resetMCQs, setMCQs } = useMCQState();
+  const { tests, updateTestStatus, resetTests, setTests } = useTestState();
   
-  const [mcqState, setMCQState] = useState(() => {
-    const { mcqs, updateMCQStatus, resetMCQs, setMCQs } = useMCQState();
-    return { mcqs, updateMCQStatus, resetMCQs, setMCQs };
-  });
-  
-  const [testState, setTestState] = useState(() => {
-    const { tests, updateTestStatus, resetTests, setTests } = useTestState();
-    return { tests, updateTestStatus, resetTests, setTests };
-  });
-  
+  // Filter state
   const { filterOptions, setFilterOptions } = useFilterState();
-  
-  // Import data hook
-  const { importData } = useImportState(
-    flashcardState.setFlashcards,
-    mcqState.setMCQs,
-    testState.setTests
-  );
   
   // UI state
   const [currentModule, setCurrentModule] = useState<ModuleType | null>(null);
   
+  // Import data
+  const { importData } = useImportState(setFlashcards, setMCQs, setTests);
+  
   const value = {
     // Data
-    flashcards: flashcardState.flashcards,
-    mcqs: mcqState.mcqs,
-    tests: testState.tests,
+    flashcards,
+    mcqs,
+    tests,
     
     // Import function
     importData,
@@ -61,16 +46,16 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     topics,
     
     // Flashcard functions
-    updateFlashcardStatus: flashcardState.updateFlashcardStatus,
-    resetFlashcards: flashcardState.resetFlashcards,
+    updateFlashcardStatus,
+    resetFlashcards,
     
     // MCQ functions
-    updateMCQStatus: mcqState.updateMCQStatus,
-    resetMCQs: mcqState.resetMCQs,
+    updateMCQStatus,
+    resetMCQs,
     
     // Test functions
-    updateTestStatus: testState.updateTestStatus,
-    resetTests: testState.resetTests,
+    updateTestStatus,
+    resetTests,
     
     // Theme
     theme,
