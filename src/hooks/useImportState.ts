@@ -2,22 +2,43 @@
 import { useCallback } from 'react';
 import { Flashcard, MCQ, Test } from '../types';
 import { toast } from 'sonner';
+import { useLearning } from '../context/LearningContext';
 
 export const useImportState = (
   setFlashcards: React.Dispatch<React.SetStateAction<Flashcard[]>>,
   setMCQs: React.Dispatch<React.SetStateAction<MCQ[]>>,
   setTests: React.Dispatch<React.SetStateAction<Test[]>>
 ) => {
+  const { updateSubjects, updateTopics } = useLearning();
+  
   const importData = useCallback(
-    (data: { flashcards: Flashcard[]; mcqs: MCQ[]; tests: Test[] }) => {
+    (data: { 
+      flashcards: Flashcard[]; 
+      mcqs: MCQ[]; 
+      tests: Test[]; 
+      subjects?: Set<string>;
+      topics?: Record<string, Set<string>>;
+    }) => {
       console.log('Importing data:', data);
       
-      // Extract unique subjects and topics from imported data to ensure they're recognized
       const processingResults = {
         flashcardsAdded: 0,
         mcqsAdded: 0,
         testsAdded: 0
       };
+      
+      // Process subjects and topics if available
+      if (data.subjects && data.topics) {
+        console.log('Updating subjects and topics:', data.subjects, data.topics);
+        updateSubjects(Array.from(data.subjects));
+        
+        // Convert Sets to Arrays for topics
+        const processedTopics: Record<string, string[]> = {};
+        for (const subject in data.topics) {
+          processedTopics[subject] = Array.from(data.topics[subject]);
+        }
+        updateTopics(processedTopics);
+      }
       
       if (data.flashcards && Array.isArray(data.flashcards) && data.flashcards.length > 0) {
         console.log('Setting flashcards:', data.flashcards);
@@ -81,7 +102,7 @@ export const useImportState = (
         toast.error('No data found in the imported file');
       }
     },
-    [setFlashcards, setMCQs, setTests]
+    [setFlashcards, setMCQs, setTests, updateSubjects, updateTopics]
   );
   
   return { importData };

@@ -6,6 +6,8 @@ export const parseExcelData = (file: File): Promise<{
   flashcards: Flashcard[];
   mcqs: MCQ[];
   tests: Test[];
+  subjects: Set<string>;
+  topics: Record<string, Set<string>>;
 }> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -21,6 +23,27 @@ export const parseExcelData = (file: File): Promise<{
         const mcqs: MCQ[] = [];
         const tests: Test[] = [];
         
+        // Track unique subjects and topics
+        const subjects = new Set<string>();
+        const topics: Record<string, Set<string>> = {};
+        
+        // Helper function to process subject and topic
+        const processSubjectAndTopic = (subject: string, topic: string) => {
+          // Ensure subject and topic are not empty
+          const validSubject = subject?.trim() || 'General';
+          const validTopic = topic?.trim() || 'General';
+          
+          // Add to our tracking sets
+          subjects.add(validSubject);
+          
+          if (!topics[validSubject]) {
+            topics[validSubject] = new Set<string>();
+          }
+          topics[validSubject].add(validTopic);
+          
+          return { subject: validSubject, topic: validTopic };
+        };
+        
         // Check if sheets exist
         if (workbook.SheetNames.includes('Flashcards')) {
           const worksheet = workbook.Sheets['Flashcards'];
@@ -31,12 +54,14 @@ export const parseExcelData = (file: File): Promise<{
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing flashcard ${index + 1}:`, row);
             if (row.question) { // Ensure we have at least a question
+              const { subject, topic } = processSubjectAndTopic(row.subject, row.topic);
+              
               flashcards.push({
                 id: row.id || `f${Date.now()}-${index}`,
                 question: row.question || '',
                 answer: row.answer || '',
-                subject: row.subject || 'General',
-                topic: row.topic || 'General',
+                subject,
+                topic,
                 correct: Number(row.correct) || 0,
                 wrong: Number(row.wrong) || 0,
                 status: row.status || 'unattempted'
@@ -54,6 +79,8 @@ export const parseExcelData = (file: File): Promise<{
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing MCQ ${index + 1}:`, row);
             if (row.question) { // Ensure we have at least a question
+              const { subject, topic } = processSubjectAndTopic(row.subject, row.topic);
+              
               mcqs.push({
                 id: row.id || `m${Date.now()}-${index}`,
                 question: row.question || '',
@@ -65,8 +92,8 @@ export const parseExcelData = (file: File): Promise<{
                 },
                 key: row.key || 'a',
                 explanation: row.explanation || '',
-                subject: row.subject || 'General',
-                topic: row.topic || 'General',
+                subject,
+                topic,
                 status: row.status || 'unattempted'
               });
             }
@@ -82,6 +109,8 @@ export const parseExcelData = (file: File): Promise<{
           jsonData.forEach((row: any, index: number) => {
             console.log(`Processing test ${index + 1}:`, row);
             if (row.question) { // Ensure we have at least a question
+              const { subject, topic } = processSubjectAndTopic(row.subject, row.topic);
+              
               tests.push({
                 id: row.id || `t${Date.now()}-${index}`,
                 question: row.question || '',
@@ -93,8 +122,8 @@ export const parseExcelData = (file: File): Promise<{
                 },
                 key: row.key || 'a',
                 explanation: row.explanation || '',
-                subject: row.subject || 'General',
-                topic: row.topic || 'General',
+                subject,
+                topic,
                 status: row.status || 'unattempted',
                 testNumber: row.testNumber || '1'
               });
@@ -102,13 +131,27 @@ export const parseExcelData = (file: File): Promise<{
           });
         }
         
+        // Convert Set to array for the topics record
+        const processedTopics: Record<string, string[]> = {};
+        for (const subject in topics) {
+          processedTopics[subject] = Array.from(topics[subject]);
+        }
+        
         console.log('Parsed data summary:', {
           flashcardsCount: flashcards.length,
           mcqsCount: mcqs.length,
-          testsCount: tests.length
+          testsCount: tests.length,
+          subjects: Array.from(subjects),
+          topics: processedTopics
         });
         
-        resolve({ flashcards, mcqs, tests });
+        resolve({ 
+          flashcards, 
+          mcqs, 
+          tests,
+          subjects,
+          topics
+        });
       } catch (error) {
         console.error('Error parsing Excel file:', error);
         reject(error);

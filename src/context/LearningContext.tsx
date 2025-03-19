@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState } from 'react';
 import { ModuleType, Flashcard, MCQ, Test, Status, FilterOptions } from '../types';
-import { subjects, topics } from '../utils/mockData';
+import { subjects as defaultSubjects, topics as defaultTopics } from '../utils/mockData';
 import { LearningContextType } from './types';
 import { useThemeState } from '../hooks/useThemeState';
 import { useFlashcardState } from '../hooks/useFlashcardState';
@@ -20,6 +20,39 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const { flashcards, updateFlashcardStatus, resetFlashcards, setFlashcards } = useFlashcardState();
   const { mcqs, updateMCQStatus, resetMCQs, setMCQs } = useMCQState();
   const { tests, updateTestStatus, resetTests, setTests } = useTestState();
+  
+  // Dynamically updated subjects and topics
+  const [subjects, setSubjects] = useState<string[]>(defaultSubjects);
+  const [topics, setTopics] = useState<Record<string, string[]>>(defaultTopics);
+  
+  // Update functions for subjects and topics
+  const updateSubjects = (newSubjects: string[]) => {
+    setSubjects(prevSubjects => {
+      // Combine existing subjects with new ones, avoiding duplicates
+      const combinedSubjects = [...new Set([...prevSubjects, ...newSubjects])];
+      console.log("Updated subjects:", combinedSubjects);
+      return combinedSubjects;
+    });
+  };
+
+  const updateTopics = (newTopics: Record<string, string[]>) => {
+    setTopics(prevTopics => {
+      const combinedTopics = { ...prevTopics };
+      
+      // For each subject in newTopics, add its topics to the combined topics
+      for (const subject in newTopics) {
+        if (combinedTopics[subject]) {
+          // Combine existing topics with new ones, avoiding duplicates
+          combinedTopics[subject] = [...new Set([...combinedTopics[subject], ...newTopics[subject]])];
+        } else {
+          combinedTopics[subject] = [...newTopics[subject]];
+        }
+      }
+      
+      console.log("Updated topics:", combinedTopics);
+      return combinedTopics;
+    });
+  };
   
   // Filter state
   const { filterOptions, setFilterOptions } = useFilterState();
@@ -44,6 +77,8 @@ export const LearningProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setFilterOptions,
     subjects,
     topics,
+    updateSubjects,
+    updateTopics,
     
     // Flashcard functions
     updateFlashcardStatus,

@@ -43,7 +43,13 @@ const ExcelImport = () => {
         toast.error('No valid data found in the Excel file');
       } else {
         toast.info(`Found ${totalItems} items to import...`);
+        
+        // Log subjects and topics from import
+        console.log('Subjects from import:', data.subjects);
+        console.log('Topics from import:', data.topics);
+        
         importData(data);
+        toast.success('Data imported successfully');
       }
     } catch (error) {
       console.error('Import error:', error);
